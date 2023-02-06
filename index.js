@@ -233,6 +233,12 @@ function itemIsOnlyOneInColumnThatCanHaveValue(value, box, answer, lI, iI) {
   return true;
 }
 
+function getNewestPossibilitiesForItem(item, lineIndex, itemIndex, answer) {
+  return item.possibilities.filter((value) => {
+    return canBoxHaveValue(item.box, lineIndex, itemIndex, value, answer);
+  });
+}
+
 function solve(puzzle) {
   let answer = mikify(puzzle);
 
@@ -245,12 +251,10 @@ function solve(puzzle) {
     answer = answer.map((line, lineIndex/*, array*/) => {
       return line.map((item, itemIndex) => {
         if (item.number) {
-          return item;
+          return item; // Item already has number
         }
 
-        const possibilities = item.possibilities.filter((value) => {
-          return canBoxHaveValue(item.box, lineIndex, itemIndex, value, answer);
-        });
+        const possibilities = getNewestPossibilitiesForItem(item, lineIndex, itemIndex, answer);
 
         if (possibilities.length === 1) {
           console.log(`${lineIndex}:${itemIndex} can only be ${possibilities[0]}`);
@@ -287,7 +291,7 @@ function solve(puzzle) {
   return answer;
 }
 
-const solved = solve(expert3);
+const solved = solve(expert2);
 solved.forEach((line) => {
   const pretty = line.map(item => {
     return item.number
